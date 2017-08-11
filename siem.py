@@ -255,7 +255,7 @@ def write_json_format(results, siem_logger):
         i = remove_null_values(i)
         update_cef_keys(i)
         name_mapping.update_fields(log, i)
-        siem_logger.info(json.dumps(i, ensure_ascii=False) + u'\n')
+        siem_logger.info(json.dumps(i, ensure_ascii=False) + u'\n', sort_keys=True)
 
 
 def write_keyvalue_format(results, siem_logger):
@@ -265,7 +265,7 @@ def write_keyvalue_format(results, siem_logger):
         name_mapping.update_fields(log, i)
         date = i[u'rt']
         # TODO:  Spaces/quotes/semicolons are not escaped here, does it matter?
-        events = list('%s="%s";' % (k, v) for k, v in i.items())
+        events = list('%s="%s";' % (k, v) for k, v in sorted(i.items()))
         siem_logger.info(' '.join([date, ] + events) + u'\n')
 
 
@@ -457,7 +457,7 @@ def format_cef(data):
     msg = CEF_FORMAT % fields
 
     update_cef_keys(data)
-    for index, (key, value) in enumerate(data.items()):
+    for index, (key, value) in enumerate(sorted(data.items())):
         value = format_extension(value)
         if index > 0:
             msg += ' %s=%s' % (key, value)
